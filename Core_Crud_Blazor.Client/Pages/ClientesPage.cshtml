@@ -1,0 +1,170 @@
+﻿@using Core_Crud_Blazor.Shared
+@using Core_Crud_Blazor.Shared.Models
+@page "/ClientesPage"
+@using Microsoft.AspNetCore.Blazor.Browser
+@inject HttpClient Http
+
+<h1>Crud com Blazor</h1>
+<hr />
+<table width="100%" style="background:#05163D; color:honeydew">
+    <tr>
+        <td width="20">&nbsp;</td>
+        <td>
+            <h2>Cadastro de Clientes</h2>
+        </td>
+        <td>&nbsp;</td>
+        <td align="right">
+            <button class="btn btn-info" onclick="@AddNovoCliente">Incluir novo Cliente</button>
+        </td>
+        <td width="10">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+    </tr>
+</table>
+
+<hr />
+
+<form>
+    <table class="form-group">
+        <tr>
+            <td>
+                <label for="Name" class="control-label">Código</label>
+            </td>
+            <td>
+                <input type="text" class="form-control" bind="@cliente.ClienteId" readonly />
+            </td>
+            <td width="20">&nbsp;</td>
+            <td>
+                <label for="Name" class="control-label">Nome</label>
+            </td>
+            <td>
+                <input type="text" class="form-control" bind="@cliente.Nome" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="Email" class="control-label">Email</label>
+            </td>
+            <td>
+                <input type="email" class="form-control" bind="@cliente.Email"/>
+            </td>
+            <td width="20">&nbsp;</td>
+            <td>
+                <label for="Pais" class="control-label">País</label>
+            </td>
+            <td>
+                <input type="text" class="form-control" bind="@cliente.Pais" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="Estado" class="control-label">Estado</label>
+            </td>
+            <td>
+                <input type="text" class="form-control" bind="@cliente.Estado" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" class="btn btn-sucess" onclick="@(async () => await AddCliente())" style="width:200px;">Salvar</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<table width="100%" style="background:#0A2464;color:honeydew">
+    <tr>
+        <td width="20">&nbsp;</td>
+        <td>
+            <h2>Detalhes dos Clientes</h2>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+    </tr>
+</table>
+@if (_clientes == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>País</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cli in _clientes)
+            {
+            <tr>
+                <td>@cli.ClienteId</td>
+                <td>@cli.Nome</td>
+                <td>@cli.Email</td>
+                <td>@cli.Pais</td>
+                <td>@cli.Estado</td>
+                <td>
+                    <button class="btn btn-primary" onclick="@(async () => await EditCliente(@cli.ClienteId))"
+                            style="width:110px;">
+                        Editar
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="@(async () => await DeleteCliente(@cli.ClienteId))">
+                        Deletar
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+@functions {
+Cliente[] _clientes;
+Cliente cliente = new Cliente();
+string ids = "0";
+bool exibeLinhaIncluida = false;
+//carrega clientes
+protected override async Task OnInitAsync()
+{
+    _clientes = await Http.GetJsonAsync<Cliente[]>("/api/Clientes/");
+}
+//adicionar novo cliene
+void AddNovoCliente()
+{
+    cliente = new Cliente();
+}
+// Adicionar detalhes
+protected async Task AddCliente()
+{
+    if (cliente.ClienteId == 0)
+    {
+        await Http.SendJsonAsync(HttpMethod.Post, "/api/Clientes/", cliente);
+    }
+    else
+    {
+        await Http.SendJsonAsync(HttpMethod.Put, "/api/Clientes/" + cliente.ClienteId, cliente);
+    }
+    cliente = new Cliente();
+    _clientes = await Http.GetJsonAsync<Cliente[]>("/api/Clientes/");
+}
+// Editar
+protected async Task EditCliente(int clienteID)
+{
+    ids = clienteID.ToString();
+    cliente = await Http.GetJsonAsync<Cliente>("/api/Clientes/" + Convert.ToInt32(clienteID));
+}
+// deletar
+protected async Task DeleteCliente(int clienteID)
+{
+    ids = clienteID.ToString();
+    await Http.DeleteAsync("/api/Clientes/" + Convert.ToInt32(clienteID));
+    _clientes = await Http.GetJsonAsync<Cliente[]>("/api/Clientes/");
+}
+}

@@ -1,9 +1,5 @@
 ﻿using Core_Crud_Blazor.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Core_Crud_Blazor.Server.DataAcess
 {
@@ -13,7 +9,6 @@ namespace Core_Crud_Blazor.Server.DataAcess
 
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
-
         }
     }
 }
