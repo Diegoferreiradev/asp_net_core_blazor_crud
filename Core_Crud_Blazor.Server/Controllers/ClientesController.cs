@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Core_Crud_Blazor.Server.DataAcess;
+using Core_Crud_Blazor.Shared.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Core_Crud_Blazor.Server.DataAcess;
-using Core_Crud_Blazor.Shared.Models;
 
 namespace Core_Crud_Blazor.Server.Controllers
 {
